@@ -7,6 +7,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { SongsModule } from './songs/songs.module';
 import { LoggerMiddleware } from './common/middleware/logger/logger.middleware';
 import { SongsController } from './songs/songs.controller';
+import { DevConfigService } from './common/providers/DevConfigService';
 
 @Module({
   imports: [
@@ -33,6 +34,10 @@ import { SongsController } from './songs/songs.controller';
     {
       provide: APP_GUARD,
       useClass: ThrottlerGuard,
+    },
+    {
+      provide: DevConfigService,
+      useClass: DevConfigService,
     },
   ],
 })

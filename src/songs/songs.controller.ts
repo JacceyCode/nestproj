@@ -4,6 +4,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpStatus,
+  Inject,
   Param,
   ParseIntPipe,
   Post,
@@ -11,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDTO } from './dto/create-song-dto';
+import { type Connection } from 'src/common/constants/connection';
 
 @Controller('songs')
 export class SongsController {
@@ -18,7 +21,13 @@ export class SongsController {
     timestamp: true,
   });
 
-  constructor(private readonly songsService: SongsService) {}
+  constructor(
+    private readonly songsService: SongsService,
+    @Inject('CONNECTION')
+    private readonly connection: Connection,
+  ) {
+    console.log('Database Connection Info:', this.connection);
+  }
 
   @Get()
   getSongs() {
@@ -27,7 +36,15 @@ export class SongsController {
   }
 
   @Get(':id')
-  getSong(@Param('id', ParseIntPipe) id: number) {
+  getSong(
+    @Param(
+      'id',
+      new ParseIntPipe({
+        errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE,
+      }),
+    )
+    id: number,
+  ) {
     return this.songsService.getSongById(id);
   }
 
