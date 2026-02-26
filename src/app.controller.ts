@@ -11,7 +11,7 @@ export class AppController {
   }
 
   @Get('check-version')
-  checkVersion(): string {
-    return this.appService.getVersion();
+  checkVersion1(): string {
+    return this.appService.getVersion1();
   }
 }

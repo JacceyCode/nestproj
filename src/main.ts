@@ -1,28 +1,39 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
-import { RequestMethod, VersioningType } from '@nestjs/common';
+import {
+  ConsoleLogger,
+  RequestMethod,
+  ValidationPipe,
+  VersioningType,
+} from '@nestjs/common';
 import helmet from 'helmet';
 import { doubleCsrf } from 'csrf-csrf';
 import cookieParser from 'cookie-parser';
 import { Request } from 'express';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    logger: new ConsoleLogger({
+      prefix: 'NestProj',
+      timestamp: true,
+    }),
+  });
+
   const configServer = app.get(ConfigService);
   const port = configServer.get<number>('PORT') || 3001;
-
-  // Set security-related HTTP headers using Helmet
-  app.use(helmet());
 
   // Enable CORS with specific settings
   app.enableCors({
     origin: configServer.get<string>('CLIENT_URL') || 'http://localhost:3000',
     credentials: true,
-    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Accept', 'Authorization', 'X-CSRF-Token'],
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token'],
     optionsSuccessStatus: 204,
   });
+
+  // Set security-related HTTP headers using Helmet
+  app.use(helmet());
 
   // Set up cookie parser
   const cookieSecret =
@@ -71,6 +82,10 @@ async function bootstrap() {
     prefix: 'v',
   });
 
+  // Global validation pipe
+  app.useGlobalPipes(new ValidationPipe());
+
   await app.listen(port);
 }
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 bootstrap();

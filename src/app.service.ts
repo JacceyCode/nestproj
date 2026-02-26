@@ -6,7 +6,7 @@ export class AppService {
     return 'Hello World!';
   }
 
-  getVersion(): string {
+  getVersion1(): string {
     return 'Version 1.0';
   }
 }

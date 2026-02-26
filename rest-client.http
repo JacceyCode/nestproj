@@ -1,0 +1,10 @@
+GET http://localhost:3000/api/v1.0/check-version
+
+###
+GET http://localhost:3000/api/v1.0/songs
+
+###
+GET http://localhost:3000/api/v2.0/songs
+
+###
+GET http://localhost:3000/api/v1.0/songs/4

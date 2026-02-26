@@ -1,9 +1,12 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
+import { SongsModule } from './songs/songs.module';
+import { LoggerMiddleware } from './common/middleware/logger/logger.middleware';
+import { SongsController } from './songs/songs.controller';
 
 @Module({
   imports: [
@@ -21,6 +24,7 @@ import { APP_GUARD } from '@nestjs/core';
         },
       ],
     }),
+    SongsModule,
   ],
   controllers: [AppController],
   providers: [
@@ -32,4 +36,8 @@ import { APP_GUARD } from '@nestjs/core';
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggerMiddleware).forRoutes(SongsController);
+  }
+}
