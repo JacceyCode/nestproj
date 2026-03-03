@@ -4,7 +4,31 @@ GET http://localhost:3000/api/v1.0/check-version
 GET http://localhost:3000/api/v1.0/songs
 
 ###
-GET http://localhost:3000/api/v2.0/songs
+GET http://localhost:3000/api/v1.0/songs/1
 
 ###
-GET http://localhost:3000/api/v1.0/songs/4
+POST http://localhost:3000/api/v1.0/songs
+Content-Type: application/json
+
+{
+  "title": "Lasting Lover 2024",
+  "artists": ["Siagla", "Johnny"],
+  "releaseDate": "2024-06-01",
+  "duration": "03:45",
+  "lyrics": "Sample lyrics for the new song."
+}
+
+###
+DELETE http://localhost:3000/api/v1.0/songs/2
+
+###
+PUT http://localhost:3000/api/v1.0/songs/1
+Content-Type: application/json
+
+{
+  "title": "Lasting Lover Updated",
+  "artists": ["Siagla", "Johnny", "New Artist"],
+  "releaseDate": "2024-06-01",
+  "duration": "03:45",
+  "lyrics": "Sample lyrics for the new song."
+}

@@ -10,7 +10,7 @@ import {
 import helmet from 'helmet';
 import { doubleCsrf } from 'csrf-csrf';
 import cookieParser from 'cookie-parser';
-import { Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -47,7 +47,7 @@ async function bootstrap() {
     configServer.get<string>('CSRF_TOKEN_KEY') || '__NestProj-csrf';
   const cookieName = configServer.get<string>('COOKIE_NAME') || 'NESTPROJ';
 
-  const { doubleCsrfProtection } = doubleCsrf({
+  const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
     getSecret: () => csrfSecret,
     cookieName: csrfTokenKey,
     getSessionIdentifier: (req: Request) =>
@@ -63,7 +63,27 @@ async function bootstrap() {
     hmacAlgorithm: 'HS256',
     ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
   });
-  app.use(doubleCsrfProtection);
+
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    // Skip CSRF protection for development environment and test routes
+    if (process.env.NODE_ENV === 'development' || req.path.includes('/test')) {
+      return next();
+    }
+
+    if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+      const token = generateCsrfToken(req, res);
+
+      res.cookie(csrfTokenKey, token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        path: '/',
+        maxAge: 1000 * 60 * 60, // 1 hour in milliseconds
+      });
+    }
+
+    doubleCsrfProtection(req, res, next);
+  });
 
   // Set global prefix with exclusion for root GET endpoint
   app.setGlobalPrefix('api', {

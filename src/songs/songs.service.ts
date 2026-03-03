@@ -1,27 +1,41 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSongDTO } from './dto/create-song-dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Song } from './song.entity';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
+import { UpdateSongDTO } from './dto/update-song-dto';
 
 @Injectable()
 export class SongsService {
-  private readonly songs: CreateSongDTO[] = [];
+  constructor(
+    @InjectRepository(Song)
+    private readonly songRepository: Repository<Song>,
+  ) {}
 
-  getAllSongs(): CreateSongDTO[] {
-    return this.songs;
+  getAllSongs(): Promise<Song[]> {
+    return this.songRepository.find();
   }
 
-  getSongById(id: number): string {
-    return `Get song with id ${id}`;
+  getSongById(id: number): Promise<Song | null> {
+    return this.songRepository.findOneBy({ id });
   }
 
-  createSong(song: CreateSongDTO) {
-    return song;
+  createSong(songDTO: CreateSongDTO): Promise<Song> {
+    const song = new Song();
+    song.title = songDTO.title;
+    song.artists = songDTO.artists;
+    song.releaseDate = songDTO.releaseDate;
+    song.duration = songDTO.duration;
+    song.lyrics = songDTO.lyrics;
+
+    return this.songRepository.save(song);
   }
 
-  updateSong(id: number, song: CreateSongDTO) {
-    return `Update song with id ${id}: song: ${JSON.stringify(song)}`;
+  updateSong(id: number, songDTO: UpdateSongDTO): Promise<UpdateResult> {
+    return this.songRepository.update(id, songDTO);
   }
 
-  deleteSong(id: number) {
-    return `Delete song with id ${id}`;
+  deleteSong(id: number): Promise<DeleteResult> {
+    return this.songRepository.delete(id);
   }
 }
