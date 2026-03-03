@@ -5,7 +5,7 @@ import {
   Delete,
   Get,
   HttpStatus,
-  Inject,
+  // Inject,
   Param,
   ParseIntPipe,
   Post,
@@ -13,7 +13,7 @@ import {
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDTO } from './dto/create-song-dto';
-import { type Connection } from 'src/common/constants/connection';
+// import { type Connection } from 'src/common/constants/connection';
 
 @Controller('songs')
 export class SongsController {
@@ -23,10 +23,10 @@ export class SongsController {
 
   constructor(
     private readonly songsService: SongsService,
-    @Inject('CONNECTION')
-    private readonly connection: Connection,
+    // @Inject('CONNECTION')
+    // private readonly connection: Connection,
   ) {
-    console.log('Database Connection Info:', this.connection);
+    // console.log('Database Connection Info:', this.connection);
   }
 
   @Get()
