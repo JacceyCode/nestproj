@@ -32,3 +32,25 @@ Content-Type: application/json
   "duration": "03:45",
   "lyrics": "Sample lyrics for the new song."
 }
+
+//// USERS /////
+
+###
+POST http://localhost:3000/api/v1.0/auth/signup
+Content-Type: application/json
+
+{
+  "firstName": "Toheeb",
+  "lastName": "Alfa",
+  "email": "toheeb@example.com",
+  "password": "password"
+}
+
+###
+POST http://localhost:3000/api/v1.0/auth/login
+Content-Type: application/json
+
+{
+  "email": "ayo@example.com",
+  "password": "password"
+}
