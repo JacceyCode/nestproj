@@ -20,6 +20,8 @@ import { ArtistModule } from './artist/artist.module';
 import { UserModule } from './user/user.module';
 import { Artist } from './artist/artist.entity';
 import { User } from './user/user.entity';
+import { Playlist } from './playlists/playlist.entity';
+import { PlaylistsModule } from './playlists/playlists.module';
 
 @Module({
   imports: [
@@ -50,7 +52,7 @@ import { User } from './user/user.entity';
         username: config.get<string>('DB_USERNAME', 'postgres'),
         password: config.get<string>('DB_PASSWORD', 'password'),
         database: config.get<string>('DB_NAME', 'default_db'),
-        entities: [Song, Artist, User],
+        entities: [Song, Artist, User, Playlist],
         synchronize:
           config.get<string>('NODE_ENV', 'development') === 'development', // Set to false in production
       }),
@@ -58,6 +60,7 @@ import { User } from './user/user.entity';
     SongsModule,
     ArtistModule,
     UserModule,
+    PlaylistsModule,
   ],
   controllers: [AppController],
   providers: [
