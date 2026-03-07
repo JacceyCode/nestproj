@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import { Response } from 'express';
+import { Request, Response } from 'express';
 import { JWT_COOKIE_OPTIONS } from '../constants/cookie-options';
 
 const COOKIE_NAME = process.env.COOKIE_NAME || 'NESTPROJ';
@@ -12,3 +12,13 @@ export const clearJwtCookie = (res: Response) =>
     ...JWT_COOKIE_OPTIONS,
     maxAge: 0,
   });
+
+export const getJwtFromCookie = (req: Request): string | null => {
+  let token: string | null = null;
+
+  if (req && req.signedCookies && req.signedCookies[COOKIE_NAME]) {
+    token = req.signedCookies[COOKIE_NAME] as string;
+  }
+
+  return token;
+};

@@ -1,5 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
 import { AppService } from './app.service';
+import { JwtAuthGuard } from './auth/jwt.guard';
+
+type RequestUser = {
+  userId: number;
+  email: string;
+};
+
+interface AuthenticatedRequest extends Request {
+  user?: RequestUser;
+}
 
 @Controller()
 export class AppController {
@@ -13,5 +24,11 @@ export class AppController {
   @Get('check-version')
   checkVersion1(): string {
     return this.appService.getVersion1();
+  }
+
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  getProfile(@Req() request: AuthenticatedRequest): RequestUser | null {
+    return request.user ?? null;
   }
 }

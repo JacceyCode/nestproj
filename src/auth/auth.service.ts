@@ -3,12 +3,25 @@ import { LoginDTO } from './dto/login-dto';
 import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/user.entity';
 import bcrypt from 'bcryptjs';
+import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
+import { setJwtCookie } from 'src/common/utils/cookie.util';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
+  ) {}
 
-  async login(loginDTO: LoginDTO): Promise<User> {
+  async login(
+    loginDTO: LoginDTO,
+    response: Response,
+  ): Promise<{
+    access_token: string;
+    data: User;
+  }> {
     const user = await this.userService.findOne(loginDTO);
 
     // Compare password
@@ -22,11 +35,24 @@ export class AuthService {
     }
 
     // Generate token
+    const payload = {
+      email: user.email,
+      sub: user.id,
+    };
+    const access_token = await this.jwtService.signAsync(payload, {
+      jwtid: uuidv4(), // Add a unique identifier for the token
+    });
+
+    // Set Cookie
+    setJwtCookie(response, access_token);
 
     // return user
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { password: _password, ...safeUser } = user;
 
-    return safeUser as User;
+    return {
+      access_token,
+      data: safeUser as User,
+    };
   }
 }
