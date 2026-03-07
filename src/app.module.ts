@@ -16,6 +16,10 @@ import { DevConfigService } from './common/providers/DevConfigService';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
 import { Song } from './songs/song.entity';
+import { ArtistModule } from './artist/artist.module';
+import { UserModule } from './user/user.module';
+import { Artist } from './artist/artist.entity';
+import { User } from './user/user.entity';
 
 @Module({
   imports: [
@@ -46,12 +50,14 @@ import { Song } from './songs/song.entity';
         username: config.get<string>('DB_USERNAME', 'postgres'),
         password: config.get<string>('DB_PASSWORD', 'password'),
         database: config.get<string>('DB_NAME', 'default_db'),
-        entities: [Song],
+        entities: [Song, Artist, User],
         synchronize:
           config.get<string>('NODE_ENV', 'development') === 'development', // Set to false in production
       }),
     }),
     SongsModule,
+    ArtistModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [
