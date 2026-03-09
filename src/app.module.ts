@@ -15,14 +15,15 @@ import { SongsController } from './songs/songs.controller';
 import { DevConfigService } from './common/providers/DevConfigService';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-import { Song } from './songs/song.entity';
+// import { Song } from './songs/song.entity';
 import { ArtistModule } from './artist/artist.module';
 import { UserModule } from './user/user.module';
-import { Artist } from './artist/artist.entity';
-import { User } from './user/user.entity';
-import { Playlist } from './playlists/playlist.entity';
+// import { Artist } from './artist/artist.entity';
+// import { User } from './user/user.entity';
+// import { Playlist } from './playlists/playlist.entity';
 import { PlaylistsModule } from './playlists/playlists.module';
 import { AuthModule } from './auth/auth.module';
+import { dataSourceOptions } from 'database/data-source';
 
 @Module({
   imports: [
@@ -44,20 +45,7 @@ import { AuthModule } from './auth/auth.module';
       }),
     }),
     // TypeOrm
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get<string>('DB_HOST', 'localhost'),
-        port: config.get<number>('DB_PORT', 5432),
-        username: config.get<string>('DB_USERNAME', 'postgres'),
-        password: config.get<string>('DB_PASSWORD', 'password'),
-        database: config.get<string>('DB_NAME', 'default_db'),
-        entities: [Song, Artist, User, Playlist],
-        synchronize:
-          config.get<string>('NODE_ENV', 'development') === 'development', // Set to false in production
-      }),
-    }),
+    TypeOrmModule.forRoot(dataSourceOptions),
     SongsModule,
     ArtistModule,
     UserModule,
