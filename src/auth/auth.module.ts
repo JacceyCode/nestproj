@@ -5,10 +5,12 @@ import { UserModule } from 'src/user/user.module';
 import { JwtModule, JwtSignOptions } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './jwt.strategy';
+import { ArtistModule } from 'src/artist/artist.module';
 
 @Module({
   imports: [
     UserModule,
+    ArtistModule,
     // JWT
     JwtModule.registerAsync({
       inject: [ConfigService],

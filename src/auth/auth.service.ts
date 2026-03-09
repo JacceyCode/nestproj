@@ -7,12 +7,15 @@ import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { setJwtCookie } from 'src/common/utils/cookie.util';
 import { v4 as uuidv4 } from 'uuid';
+import { ArtistService } from 'src/artist/artist.service';
+import { JwtPayloadType } from './types';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
+    private readonly artistService: ArtistService,
   ) {}
 
   async login(
@@ -35,10 +38,16 @@ export class AuthService {
     }
 
     // Generate token
-    const payload = {
+    const payload: JwtPayloadType = {
       email: user.email,
-      sub: user.id,
+      userId: user.id,
     };
+
+    const artist = await this.artistService.findArtist(user.id);
+    if (artist) {
+      payload.artistId = artist.id;
+    }
+
     const access_token = await this.jwtService.signAsync(payload, {
       jwtid: uuidv4(), // Add a unique identifier for the token
     });

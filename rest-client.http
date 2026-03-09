@@ -12,7 +12,7 @@ Content-Type: application/json
 
 {
   "title": "Lasting Lover 2024",
-  "artists": ["Siagla", "Johnny"],
+  "artists": [1],
   "releaseDate": "2024-06-01",
   "duration": "03:45",
   "lyrics": "Sample lyrics for the new song."
@@ -27,7 +27,7 @@ Content-Type: application/json
 
 {
   "title": "Lasting Lover Updated",
-  "artists": ["Siagla", "Johnny", "New Artist"],
+  "artists": [1],
   "releaseDate": "2024-06-01",
   "duration": "03:45",
   "lyrics": "Sample lyrics for the new song."
@@ -57,4 +57,13 @@ Content-Type: application/json
 
 ###
 GET http://localhost:3000/api/v1.0/profile
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvaGVlYkBleGFtcGxlLmNvbSIsInN1YiI6MiwiaWF0IjoxNzcyOTAyMjMxLCJleHAiOjE3NzI5MDU4MzEsImF1ZCI6Im5lc3Rwcm9qLXVzZXJzIiwiaXNzIjoibmVzdHByb2oiLCJqdGkiOiI4MjAxN2Q2Ni0yNzlkLTQ3NjYtYmNlOC0yMWI3ZDI5ZGQzNmYifQ.Q0AAzeE2TR1wXdshovkIi435LO_BFI5U5HeaWgCQxN4
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvaGVlYkBleGFtcGxlLmNvbSIsInN1YiI6MiwiaWF0IjoxNzcyOTAyMjMxLCJleHAiOjE3NzI5MDU4MzEsImF1ZCI6Im5lc3Rwcm9qLXVzZXJzIiwiaXNzIjoibmVzdHByb2oiLCJqdGkiOiI4MjAxN2Q2Ni0yNzlkLTQ3NjYtYmNlOC0yMWI3ZDI5ZGQzNmYifQ.Q0AAzeE2TR1wXdshovkIi435LO_BFI5U5HeaWgCQxN4
+
+
+/// Artist
+###
+GET http://localhost:3000/api/v1.0/artist
+
+
+###
+POST http://localhost:3000/api/v1.0/artist/create

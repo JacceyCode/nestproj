@@ -5,14 +5,16 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { getJwtFromCookie } from 'src/common/utils/cookie.util';
 import { validate as validateUUId } from 'uuid';
+import { JwtPayloadType } from './types';
 
-interface JwtPayload {
-  sub: string;
-  email: string;
-  jti: string;
-  iat?: number;
-  exp?: number;
-}
+// interface JwtPayload {
+//   userId: number;
+//   artistId?: number;
+//   email: string;
+//   jti: string;
+//   iat?: number;
+//   exp?: number;
+// }
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -41,13 +43,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  validate(payload: JwtPayload) {
+  validate(payload: JwtPayloadType) {
     if (!validateUUId(payload.jti)) {
       throw new UnauthorizedException(
         'Invalid token: jti claim is not a valid UUID',
       );
     }
 
-    return { userId: payload.sub, email: payload.email };
+    return {
+      userId: payload.userId,
+      email: payload.email,
+      artistId: payload.artistId,
+    };
   }
 }

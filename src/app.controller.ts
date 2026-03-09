@@ -1,15 +1,11 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { AppService } from './app.service';
-import { JwtAuthGuard } from './auth/jwt.guard';
-
-type RequestUser = {
-  userId: number;
-  email: string;
-};
+import { JwtAuthGuard } from './auth/guards/jwt.guard';
+import { JwtPayloadType } from './auth/types';
 
 interface AuthenticatedRequest extends Request {
-  user?: RequestUser;
+  user?: JwtPayloadType;
 }
 
 @Controller()
@@ -28,7 +24,7 @@ export class AppController {
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
-  getProfile(@Req() request: AuthenticatedRequest): RequestUser | null {
+  getProfile(@Req() request: AuthenticatedRequest): JwtPayloadType | null {
     return request.user ?? null;
   }
 }
