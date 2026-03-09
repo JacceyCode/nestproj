@@ -1,14 +1,20 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { LoginDTO } from './dto/login-dto';
 import { UserService } from 'src/user/user.service';
-import { User } from 'src/user/user.entity';
 import bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { Response } from 'express';
 import { setJwtCookie } from 'src/common/utils/cookie.util';
 import { v4 as uuidv4 } from 'uuid';
 import { ArtistService } from 'src/artist/artist.service';
-import { JwtPayloadType } from './types';
+import { Enable2FAType, JwtPayloadType } from './types';
+import * as speakeasy from 'speakeasy';
+import { UpdateResult } from 'typeorm';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -16,6 +22,7 @@ export class AuthService {
     private readonly userService: UserService,
     private readonly jwtService: JwtService,
     private readonly artistService: ArtistService,
+    private readonly configService: ConfigService,
   ) {}
 
   async login(
@@ -23,7 +30,8 @@ export class AuthService {
     response: Response,
   ): Promise<{
     access_token: string;
-    data: User;
+    validate2FA?: string;
+    message?: string;
   }> {
     const user = await this.userService.findOne(loginDTO);
 
@@ -55,13 +63,76 @@ export class AuthService {
     // Set Cookie
     setJwtCookie(response, access_token);
 
-    // return user
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _password, ...safeUser } = user;
-
-    return {
+    const loginResponse: {
+      access_token: string;
+      validate2FA?: string;
+      message?: string;
+    } = {
       access_token,
-      data: safeUser as User,
     };
+
+    if (user.enable2FA && user.twoFASecret) {
+      const base_url =
+        this.configService.get<string>('CLIENT_URL') || 'http://localhost:3000';
+
+      loginResponse.validate2FA = `${base_url}/api/v1.0/auth/validate-2fa`;
+      loginResponse.message =
+        'Please send the OTP from your 2FA app to validate your login.';
+    }
+
+    return loginResponse;
+  }
+
+  async enable2FA(userId: number): Promise<Enable2FAType> {
+    const user = await this.userService.findById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.enable2FA) {
+      return {
+        secret: user.twoFASecret!,
+      };
+    }
+
+    const secret = speakeasy.generateSecret();
+
+    await this.userService.updateSecretKey(user.id, secret.base32);
+
+    return { secret: secret.base32 };
+  }
+
+  async validate2FAToken(
+    userId: number,
+    token: string,
+  ): Promise<{ verified: boolean }> {
+    try {
+      const user = await this.userService.findById(userId);
+
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      if (!user.enable2FA || !user.twoFASecret) {
+        throw new UnauthorizedException('2FA not enabled for this user.');
+      }
+
+      const verified = speakeasy.totp.verify({
+        secret: user.twoFASecret,
+        encoding: 'base32',
+        token,
+      });
+
+      return { verified: verified };
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : 'Unknown error';
+
+      throw new UnauthorizedException('Error verifying 2FA token: ' + message);
+    }
+  }
+
+  async disable2FA(userId: number): Promise<UpdateResult> {
+    return this.userService.disable2FA(userId);
   }
 }

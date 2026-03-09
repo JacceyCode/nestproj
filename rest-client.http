@@ -33,7 +33,7 @@ Content-Type: application/json
   "lyrics": "Sample lyrics for the new song."
 }
 
-//// USERS /////
+//// AUTH /////
 
 ###
 POST http://localhost:3000/api/v1.0/auth/signup
@@ -55,6 +55,26 @@ Content-Type: application/json
   "password": "password"
 }
 
+/// Enable 2FA
+###
+GET http://localhost:3000/api/v1.0/auth/enable-2fa
+
+/// Disable 2FA
+###
+GET http://localhost:3000/api/v1.0/auth/disable-2fa
+
+/// Validate 2FA token
+###
+POST http://localhost:3000/api/v1.0/auth/validate-2fa
+Content-Type: application/json
+
+{
+  "token": "858412"
+}
+
+
+//// USER //////
+/// Profile
 ###
 GET http://localhost:3000/api/v1.0/profile
 # Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvaGVlYkBleGFtcGxlLmNvbSIsInN1YiI6MiwiaWF0IjoxNzcyOTAyMjMxLCJleHAiOjE3NzI5MDU4MzEsImF1ZCI6Im5lc3Rwcm9qLXVzZXJzIiwiaXNzIjoibmVzdHByb2oiLCJqdGkiOiI4MjAxN2Q2Ni0yNzlkLTQ3NjYtYmNlOC0yMWI3ZDI5ZGQzNmYifQ.Q0AAzeE2TR1wXdshovkIi435LO_BFI5U5HeaWgCQxN4

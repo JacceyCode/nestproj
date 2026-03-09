@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDTO } from './dto/create-user-dto';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import { LoginDTO } from 'src/auth/dto/login-dto';
 
@@ -35,5 +35,33 @@ export class UserService {
     }
 
     return user;
+  }
+
+  async findById(id: number): Promise<User | null> {
+    return await this.userRepository.findOneBy({ id });
+  }
+
+  async updateSecretKey(userId: number, secret: string): Promise<UpdateResult> {
+    return this.userRepository.update(
+      {
+        id: userId,
+      },
+      {
+        twoFASecret: secret,
+        enable2FA: true,
+      },
+    );
+  }
+
+  async disable2FA(userId: number): Promise<UpdateResult> {
+    return this.userRepository.update(
+      {
+        id: userId,
+      },
+      {
+        enable2FA: false,
+        twoFASecret: null,
+      },
+    );
   }
 }
