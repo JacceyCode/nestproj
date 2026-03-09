@@ -24,6 +24,7 @@ import { UserModule } from './user/user.module';
 import { PlaylistsModule } from './playlists/playlists.module';
 import { AuthModule } from './auth/auth.module';
 import { dataSourceOptions } from 'database/data-source';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -51,6 +52,7 @@ import { dataSourceOptions } from 'database/data-source';
     UserModule,
     PlaylistsModule,
     AuthModule,
+    SeedModule,
   ],
   controllers: [AppController],
   providers: [

@@ -12,6 +12,7 @@ import helmet from 'helmet';
 import { doubleCsrf } from 'csrf-csrf';
 import cookieParser from 'cookie-parser';
 import { NextFunction, Request, Response } from 'express';
+import { SeedService } from './seed/seed.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -109,6 +110,10 @@ async function bootstrap() {
   // Add ClassSerializerInterceptor globally (helps to apply class transformer on all entity objects)
   // Using it to delete password out of user object when fetched alongside the @Exclude() decorator on the password field
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+
+  // Seed database with initial data (optional, can be removed in production)
+  const seedService = app.get(SeedService);
+  await seedService.seed();
 
   await app.listen(port);
 }
