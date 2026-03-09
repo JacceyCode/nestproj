@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, UpdateResult } from 'typeorm';
 import bcrypt from 'bcryptjs';
 import { LoginDTO } from 'src/auth/dto/login-dto';
+import { v4 as uuidV4 } from 'uuid';
 
 @Injectable()
 export class UserService {
@@ -14,15 +15,18 @@ export class UserService {
   ) {}
 
   async create(userDTO: CreateUserDTO): Promise<User> {
+    const user = new User();
+    Object.assign(user, userDTO);
+    user.apiKey = uuidV4();
+
     const salt = await bcrypt.genSalt(12);
-    userDTO.password = await bcrypt.hash(userDTO.password, salt);
+    user.password = await bcrypt.hash(userDTO.password, salt);
 
-    const user = await this.userRepository.save(userDTO);
+    const createdUser = await this.userRepository.save(user);
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password: _password, ...safeUser } = user; // Remove password before returning the user object
+    // const { password: _password, ...safeUser } = createdUser; // Remove password before returning the user object
 
-    return safeUser as User;
+    return createdUser;
   }
 
   async findOne(loginDTO: LoginDTO): Promise<User> {
@@ -63,5 +67,9 @@ export class UserService {
         twoFASecret: null,
       },
     );
+  }
+
+  async findByApiKey(apiKey: string): Promise<User | null> {
+    return await this.userRepository.findOneBy({ apiKey });
   }
 }

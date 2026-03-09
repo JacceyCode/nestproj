@@ -5,16 +5,7 @@ import { Request } from 'express';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { getJwtFromCookie } from 'src/common/utils/cookie.util';
 import { validate as validateUUId } from 'uuid';
-import { JwtPayloadType } from './types';
-
-// interface JwtPayload {
-//   userId: number;
-//   artistId?: number;
-//   email: string;
-//   jti: string;
-//   iat?: number;
-//   exp?: number;
-// }
+import { JwtPayloadType } from '../types';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

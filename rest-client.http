@@ -40,9 +40,9 @@ POST http://localhost:3000/api/v1.0/auth/signup
 Content-Type: application/json
 
 {
-  "firstName": "Toheeb",
-  "lastName": "Alfa",
-  "email": "toheeb@example.com",
+  "firstName": "Ayos",
+  "lastName": "Maffs",
+  "email": "ayos@example.com",
   "password": "password"
 }
 
@@ -51,7 +51,7 @@ POST http://localhost:3000/api/v1.0/auth/login
 Content-Type: application/json
 
 {
-  "email": "toheeb@example.com",
+  "email": "ayo@example.com",
   "password": "password"
 }
 
@@ -78,6 +78,11 @@ Content-Type: application/json
 ###
 GET http://localhost:3000/api/v1.0/profile
 # Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRvaGVlYkBleGFtcGxlLmNvbSIsInN1YiI6MiwiaWF0IjoxNzcyOTAyMjMxLCJleHAiOjE3NzI5MDU4MzEsImF1ZCI6Im5lc3Rwcm9qLXVzZXJzIiwiaXNzIjoibmVzdHByb2oiLCJqdGkiOiI4MjAxN2Q2Ni0yNzlkLTQ3NjYtYmNlOC0yMWI3ZDI5ZGQzNmYifQ.Q0AAzeE2TR1wXdshovkIi435LO_BFI5U5HeaWgCQxN4
+
+
+###
+GET http://localhost:3000/api/v1.0/auth/profile
+Authorization: Bearer fc78a359-1903-4095-ab64-79cc2e86be9e
 
 
 /// Artist

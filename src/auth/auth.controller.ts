@@ -18,6 +18,7 @@ import { JwtAuthGuard } from './guards/jwt.guard';
 import { Enable2FAType, JwtPayloadType } from './types';
 import { ValidateTokenDTO } from './dto/validate-token.dto';
 import { UpdateResult } from 'typeorm';
+import { HttpBearerGuard } from './guards/http-bearer.guard';
 
 export interface AuthenticatedRequest extends Request {
   user?: JwtPayloadType;
@@ -75,5 +76,20 @@ export class AuthController {
       user.userId,
       validateTokenDTO.token,
     );
+  }
+
+  @Get('profile')
+  @UseGuards(HttpBearerGuard)
+  getProfile(@Request() req: AuthenticatedRequest) {
+    const user = req.user;
+
+    if (!user) {
+      throw new UnauthorizedException();
+    }
+
+    return {
+      msg: 'Authenticated with API Key',
+      user,
+    };
   }
 }

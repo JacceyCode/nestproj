@@ -15,6 +15,7 @@ import { Enable2FAType, JwtPayloadType } from './types';
 import * as speakeasy from 'speakeasy';
 import { UpdateResult } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -134,5 +135,9 @@ export class AuthService {
 
   async disable2FA(userId: number): Promise<UpdateResult> {
     return this.userService.disable2FA(userId);
+  }
+
+  async validateUserByApiKey(apiKey: string): Promise<User | null> {
+    return this.userService.findByApiKey(apiKey);
   }
 }

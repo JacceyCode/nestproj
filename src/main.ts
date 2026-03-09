@@ -1,4 +1,4 @@
-import { NestFactory } from '@nestjs/core';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import {
@@ -6,6 +6,7 @@ import {
   RequestMethod,
   ValidationPipe,
   VersioningType,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import helmet from 'helmet';
 import { doubleCsrf } from 'csrf-csrf';
@@ -104,6 +105,10 @@ async function bootstrap() {
 
   // Global validation pipe
   app.useGlobalPipes(new ValidationPipe());
+
+  // Add ClassSerializerInterceptor globally (helps to apply class transformer on all entity objects)
+  // Using it to delete password out of user object when fetched alongside the @Exclude() decorator on the password field
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   await app.listen(port);
 }
