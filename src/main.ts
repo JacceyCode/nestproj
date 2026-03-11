@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
@@ -12,7 +13,9 @@ import helmet from 'helmet';
 import { doubleCsrf } from 'csrf-csrf';
 import cookieParser from 'cookie-parser';
 import { NextFunction, Request, Response } from 'express';
-import { SeedService } from './seed/seed.service';
+// import { SeedService } from './seed/seed.service';
+
+declare const module: any;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
@@ -112,10 +115,16 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   // Seed database with initial data (optional, can be removed in production)
-  const seedService = app.get(SeedService);
-  await seedService.seed();
+  // const seedService = app.get(SeedService);
+  // await seedService.seed();
 
   await app.listen(port);
+
+  // Hot reloading
+  if (module.hot) {
+    module.hot.accept();
+    module.hot.dispose(() => app.close());
+  }
 }
 // eslint-disable-next-line @typescript-eslint/no-floating-promises
 bootstrap();

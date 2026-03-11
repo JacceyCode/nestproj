@@ -15,15 +15,11 @@ import { SongsController } from './songs/songs.controller';
 import { DevConfigService } from './common/providers/DevConfigService';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataSource } from 'typeorm';
-// import { Song } from './songs/song.entity';
 import { ArtistModule } from './artist/artist.module';
 import { UserModule } from './user/user.module';
-// import { Artist } from './artist/artist.entity';
-// import { User } from './user/user.entity';
-// import { Playlist } from './playlists/playlist.entity';
 import { PlaylistsModule } from './playlists/playlists.module';
 import { AuthModule } from './auth/auth.module';
-import { dataSourceOptions } from 'database/data-source';
+import { typeOrmAsyncConfig } from 'database/data-source';
 import { SeedModule } from './seed/seed.module';
 
 @Module({
@@ -46,7 +42,7 @@ import { SeedModule } from './seed/seed.module';
       }),
     }),
     // TypeOrm
-    TypeOrmModule.forRoot(dataSourceOptions),
+    TypeOrmModule.forRootAsync(typeOrmAsyncConfig),
     SongsModule,
     ArtistModule,
     UserModule,
