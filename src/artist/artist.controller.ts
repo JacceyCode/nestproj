@@ -11,13 +11,17 @@ import { ArtistService } from './artist.service';
 import { Artist } from './artist.entity';
 import type { Request } from 'express';
 import { JwtPayloadType } from 'src/auth/types';
+import { ApiBearerAuth, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 
 interface AuthenticatedRequest extends Request {
   user?: JwtPayloadType;
 }
 
 @Controller('artist')
+@ApiTags('Artist')
 @UseGuards(JwtAuthGuard)
+@ApiBearerAuth('JWT-auth-header')
+@ApiCookieAuth('nestproj')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 

@@ -3,7 +3,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { LoginDTO } from './dto/login-dto';
+import { LoginDTO } from './dto/login.dto';
 import { UserService } from 'src/user/user.service';
 import bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';

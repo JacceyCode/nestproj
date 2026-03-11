@@ -16,15 +16,17 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { SongsService } from './songs.service';
-import { CreateSongDTO } from './dto/create-song-dto';
+import { CreateSongDTO } from './dto/create-song.dto';
 import { Song } from './song.entity';
 import { DeleteResult, UpdateResult } from 'typeorm';
-import { UpdateSongDTO } from './dto/update-song-dto';
+import { UpdateSongDTO } from './dto/update-song.dto';
 import { Pagination } from 'nestjs-typeorm-paginate';
 import { ArtistJwtGuard } from 'src/auth/guards/artists-jwt.guard';
+import { ApiBearerAuth, ApiCookieAuth, ApiTags } from '@nestjs/swagger';
 // import { type Connection } from 'src/common/constants/connection';
 
 @Controller('songs')
+@ApiTags('Songs')
 export class SongsController {
   private readonly logger = new ConsoleLogger(SongsController.name, {
     timestamp: true,
@@ -82,12 +84,16 @@ export class SongsController {
 
   @Post()
   @UseGuards(ArtistJwtGuard)
+  @ApiBearerAuth('JWT-auth-header')
+  @ApiCookieAuth('nestproj')
   createSong(@Body() createSong: CreateSongDTO): Promise<Song> {
     return this.songsService.createSong(createSong);
   }
 
   @Put(':id')
   @UseGuards(ArtistJwtGuard)
+  @ApiBearerAuth('JWT-auth-header')
+  @ApiCookieAuth('nestproj')
   updateSong(
     @Param('id', ParseIntPipe) id: number,
     @Body() updateSongDTO: UpdateSongDTO,
@@ -97,6 +103,8 @@ export class SongsController {
 
   @Delete(':id')
   @UseGuards(ArtistJwtGuard)
+  @ApiBearerAuth('JWT-auth-header')
+  @ApiCookieAuth('nestproj')
   deleteSong(@Param('id', ParseIntPipe) id: number): Promise<DeleteResult> {
     return this.songsService.deleteSong(id);
   }

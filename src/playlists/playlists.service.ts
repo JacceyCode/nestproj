@@ -4,7 +4,7 @@ import { Playlist } from './playlist.entity';
 import { Repository } from 'typeorm';
 import { Song } from 'src/songs/song.entity';
 import { User } from 'src/user/user.entity';
-import { CreatePlayListDTO } from 'src/songs/dto/create-playlist-dto';
+import { CreatePlayListDTO } from 'src/songs/dto/create-playlist.dto';
 
 @Injectable()
 export class PlaylistsService {

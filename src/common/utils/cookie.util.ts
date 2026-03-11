@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { Request, Response } from 'express';
 import { JWT_COOKIE_OPTIONS } from '../constants/cookie-options';
 
-const COOKIE_NAME = process.env.COOKIE_NAME || 'NESTPROJ';
+const COOKIE_NAME = process.env.COOKIE_NAME || 'nestproj';
 
 export const setJwtCookie = (res: Response, jwtToken: string) =>
   res.cookie(COOKIE_NAME, jwtToken, JWT_COOKIE_OPTIONS);

@@ -13,6 +13,7 @@ import helmet from 'helmet';
 import { doubleCsrf } from 'csrf-csrf';
 import cookieParser from 'cookie-parser';
 import { NextFunction, Request, Response } from 'express';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 // import { SeedService } from './seed/seed.service';
 
 declare const module: any;
@@ -117,6 +118,39 @@ async function bootstrap() {
   // Seed database with initial data (optional, can be removed in production)
   // const seedService = app.get(SeedService);
   // await seedService.seed();
+
+  // Swagger docs setup
+  const config = new DocumentBuilder()
+    .setTitle('Nest Project API')
+    .setDescription('The Nest Project API description')
+    .setVersion('1.0')
+    .addTag('nestproj')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'JWT',
+        in: 'header',
+        description: 'Enter JWT token in header to access protected routes',
+      },
+      'JWT-auth-header',
+    )
+    .addCookieAuth(
+      configServer.get<string>('COOKIE_NAME') || 'nestproj',
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        in: 'cookie',
+        name: configServer.get<string>('COOKIE_NAME') || 'nestproj',
+        description: 'JWT token stored in cookie for authentication',
+      },
+      configServer.get<string>('COOKIE_NAME') || 'nestproj',
+    )
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, documentFactory);
 
   await app.listen(port);
 

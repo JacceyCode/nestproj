@@ -3,6 +3,7 @@ import { Request } from 'express';
 import { AppService } from './app.service';
 import { JwtAuthGuard } from './auth/guards/jwt.guard';
 import { JwtPayloadType } from './auth/types';
+import { ApiBearerAuth, ApiCookieAuth } from '@nestjs/swagger';
 
 interface AuthenticatedRequest extends Request {
   user?: JwtPayloadType;
@@ -24,6 +25,8 @@ export class AppController {
 
   @Get('profile')
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth-header')
+  @ApiCookieAuth('nestproj')
   getProfile(@Req() request: AuthenticatedRequest): JwtPayloadType | null {
     return request.user ?? null;
   }
