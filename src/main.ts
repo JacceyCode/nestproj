@@ -13,7 +13,7 @@ import helmet from 'helmet';
 // import { doubleCsrf } from 'csrf-csrf';
 import cookieParser from 'cookie-parser';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { SeedService } from './seed/seed.service';
+// import { SeedService } from './seed/seed.service';
 
 declare const module: any;
 
@@ -115,8 +115,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   // Seed database with initial data (optional, can be removed in production)
-  const seedService = app.get(SeedService);
-  await seedService.seed();
+  // const seedService = app.get(SeedService);
+  // await seedService.seed();
 
   // Swagger docs setup
   const config = new DocumentBuilder()

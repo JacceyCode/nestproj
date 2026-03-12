@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { CookieOptions } from 'express';
 
 const isProduction = process.env.NODE_ENV === 'production';
-const domain = isProduction ? process.env.CLIENT_URL : 'localhost';
+const domain = isProduction ? process.env.DOMAIN : 'localhost';
 const COOKIE_MAX_AGE = process.env.COOKIE_MAX_AGE
   ? parseInt(process.env.COOKIE_MAX_AGE, 10)
   : 1000 * 60 * 60;
