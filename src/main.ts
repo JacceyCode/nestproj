@@ -10,11 +10,10 @@ import {
   ClassSerializerInterceptor,
 } from '@nestjs/common';
 import helmet from 'helmet';
-import { doubleCsrf } from 'csrf-csrf';
+// import { doubleCsrf } from 'csrf-csrf';
 import cookieParser from 'cookie-parser';
-import { NextFunction, Request, Response } from 'express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-// import { SeedService } from './seed/seed.service';
+import { SeedService } from './seed/seed.service';
 
 declare const module: any;
 
@@ -47,53 +46,49 @@ async function bootstrap() {
   app.use(cookieParser(cookieSecret));
 
   // Set up double CSRF protection
-  const csrfSecret =
-    configServer.get<string>('CSRF_SECRET') || 'default_csrf_secret';
-  const csrfTokenKey =
-    configServer.get<string>('CSRF_TOKEN_KEY') || '__NestProj-csrf';
-  const cookieName = configServer.get<string>('COOKIE_NAME') || 'NESTPROJ';
+  // const csrfSecret =
+  //   configServer.get<string>('CSRF_SECRET') || 'default_csrf_secret';
+  // const csrfTokenKey =
+  //   configServer.get<string>('CSRF_TOKEN_KEY') || '__NestProj-csrf';
+  // const cookieName = configServer.get<string>('COOKIE_NAME') || 'NESTPROJ';
 
-  const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
-    getSecret: () => csrfSecret,
-    cookieName: csrfTokenKey,
-    getSessionIdentifier: (req: Request) =>
-      req.signedCookies?.[cookieName] || 'default_session_id',
-    cookieOptions: {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 1000 * 60 * 60, // 1 hour in milliseconds
-    },
-    size: 32,
-    hmacAlgorithm: 'HS256',
-    ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
-  });
+  // const { doubleCsrfProtection, generateCsrfToken } = doubleCsrf({
+  //   getSecret: () => csrfSecret,
+  //   cookieName: csrfTokenKey,
+  //   getSessionIdentifier: (req: Request) =>
+  //     req.signedCookies?.[cookieName] || 'default_session_id',
+  //   cookieOptions: {
+  //     httpOnly: true,
+  //     secure: process.env.NODE_ENV === 'production',
+  //     sameSite: 'strict',
+  //     path: '/',
+  //     maxAge: 1000 * 60 * 60, // 1 hour in milliseconds
+  //   },
+  //   size: 32,
+  //   hmacAlgorithm: 'HS256',
+  //   ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],
+  // });
 
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    // Skip CSRF protection for development environment and test routes
-    if (
-      process.env.NODE_ENV === 'development' ||
-      req.path.includes('/test') ||
-      !csrfSecret
-    ) {
-      return next();
-    }
+  // app.use((req: Request, res: Response, next: NextFunction) => {
+  //   // Skip CSRF protection for development environment and test routes
+  //   if (process.env.NODE_ENV === 'development' || req.path.includes('/test')) {
+  //     return next();
+  //   }
 
-    if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
-      const token = generateCsrfToken(req, res);
+  //   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) {
+  //     const token = generateCsrfToken(req, res);
 
-      res.cookie(csrfTokenKey, token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'strict',
-        path: '/',
-        maxAge: 1000 * 60 * 60, // 1 hour in milliseconds
-      });
-    }
+  //     res.cookie(csrfTokenKey, token, {
+  //       httpOnly: true,
+  //       secure: process.env.NODE_ENV === 'production',
+  //       sameSite: 'strict',
+  //       path: '/',
+  //       maxAge: 1000 * 60 * 60, // 1 hour in milliseconds
+  //     });
+  //   }
 
-    doubleCsrfProtection(req, res, next);
-  });
+  //   doubleCsrfProtection(req, res, next);
+  // });
 
   // Set global prefix with exclusion for root GET endpoint
   app.setGlobalPrefix('api', {
@@ -120,8 +115,8 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   // Seed database with initial data (optional, can be removed in production)
-  // const seedService = app.get(SeedService);
-  // await seedService.seed();
+  const seedService = app.get(SeedService);
+  await seedService.seed();
 
   // Swagger docs setup
   const config = new DocumentBuilder()
