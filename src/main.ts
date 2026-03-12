@@ -72,7 +72,11 @@ async function bootstrap() {
 
   app.use((req: Request, res: Response, next: NextFunction) => {
     // Skip CSRF protection for development environment and test routes
-    if (process.env.NODE_ENV === 'development' || req.path.includes('/test')) {
+    if (
+      process.env.NODE_ENV === 'development' ||
+      req.path.includes('/test') ||
+      !csrfSecret
+    ) {
       return next();
     }
 
